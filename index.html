@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maze Algorithm Control Panel</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ══════════════════ SIDEBAR ══════════════════ -->
+<div id="sidebar">
+  <h1>🧩 Maze Algorithm Panel</h1>
+
+  <!-- Maze Generation -->
+  <div class="section">
+    <div class="section-title">Maze Generator</div>
+    <label>Rows <span id="lbl-rows">20</span></label>
+    <input type="range" id="sl-rows" min="5" max="100" value="20"
+      oninput="document.getElementById('lbl-rows').textContent=this.value">
+    <label style="margin-top:8px">Columns <span id="lbl-cols">20</span></label>
+    <input type="range" id="sl-cols" min="5" max="100" value="20"
+      oninput="document.getElementById('lbl-cols').textContent=this.value">
+    <label style="margin-top:8px">Algorithm</label>
+    <select id="sel-gen">
+      <option value="dfs">Recursive DFS (long winding paths)</option>
+      <option value="prim">Randomized Prim (sparse, many dead ends)</option>
+      <option value="kruskal">Randomized Kruskal (uniform random)</option>
+      <option value="guaranteed">Random + Guaranteed Path (always solvable)</option>
+      <option value="custom">Custom — paste text below</option>
+    </select>
+    <label style="margin-top:8px">Cell density (walls %)</label>
+    <input type="range" id="sl-density" min="5" max="50" value="25"
+      oninput="document.getElementById('lbl-density').textContent=this.value+'%'">
+    <div style="font-size:.7rem;color:var(--txt2);margin-bottom:6px" id="lbl-density">25%</div>
+    <textarea id="txt-custom" rows="4"
+      style="width:100%;background:#0a0a20;border:1px solid var(--border);color:var(--txt);
+             border-radius:6px;padding:6px;font-family:monospace;font-size:.75rem;
+             resize:vertical;display:none"
+      placeholder="Paste maze text here (S, G, X, 0-9)..."></textarea>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <button class="btn btn-primary" style="flex:1" onclick="generateMaze()">Generate</button>
+      <button class="btn btn-secondary" style="flex:1" onclick="loadCustom()">Load Text</button>
+    </div>
+  </div>
+
+  <!-- Algorithm Selection -->
+  <div class="section">
+    <div class="section-title">Algorithm</div>
+    <div class="algo-tabs" id="algo-tabs">
+      <button class="algo-tab active" data-algo="bfs"    onclick="selectAlgo(this)">BFS</button>
+      <button class="algo-tab"        data-algo="dijkstra" onclick="selectAlgo(this)">Dijkstra</button>
+      <button class="algo-tab"        data-algo="flow"   onclick="selectAlgo(this)">Max Flow</button>
+      <button class="algo-tab"        data-algo="mst"    onclick="selectAlgo(this)">MST</button>
+    </div>
+    <div id="algo-opts-bfs">
+      <label>Movement</label>
+      <select id="bfs-mode"><option value="4">4-directional</option><option value="8">8-directional</option></select>
+    </div>
+    <div id="algo-opts-dijkstra" style="display:none">
+      <label>Movement</label>
+      <select id="dij-mode"><option value="4">4-directional</option><option value="8">8-directional</option></select>
+      <label style="margin-top:6px">Cost model</label>
+      <select id="dij-cost">
+        <option value="1">Model 1 — entering cost [value(v)]</option>
+        <option value="2">Model 2 — leaving cost  [value(u)]</option>
+        <option value="3">Model 3 — combined      [value(u)+value(v)]</option>
+      </select>
+    </div>
+    <div id="algo-opts-flow" style="display:none">
+      <label>Movement</label>
+      <select id="flow-mode"><option value="4">4-directional</option><option value="8">8-directional</option></select>
+      <div style="font-size:.72rem;color:var(--txt2);margin-top:4px">
+        Source = G, Sink = S · capacity(u→v)=value(v)
+      </div>
+    </div>
+    <div id="algo-opts-mst" style="display:none">
+      <label>Movement</label>
+      <select id="mst-mode"><option value="4">4-directional</option><option value="8">8-directional</option></select>
+      <div style="font-size:.72rem;color:var(--txt2);margin-top:4px">
+        weight(u,v) = value(u)+value(v) · Kruskal + Union-Find
+      </div>
+    </div>
+  </div>
+
+  <!-- Animation Controls -->
+  <div class="section">
+    <div class="section-title">Animation</div>
+    <label>Speed</label>
+    <div class="speed-row">
+      <input type="range" id="sl-speed" min="1" max="5" value="3" style="flex:1"
+        oninput="updateSpeed()">
+      <span id="lbl-speed">×3</span>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <button class="btn btn-go"  style="flex:1" id="btn-run"  onclick="runAlgo()">▶ Run</button>
+      <button class="btn btn-stop" style="flex:1" id="btn-step" onclick="stepOnce()">⏭ Step</button>
+    </div>
+    <button class="btn btn-secondary" style="margin-top:6px" onclick="resetViz()">↺ Reset</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="section">
+    <div class="section-title">Results</div>
+    <div class="stat-grid" id="stat-grid">
+      <div class="stat-box"><div class="sv" id="sv-visited">—</div><div class="sk">Cells visited</div></div>
+      <div class="stat-box"><div class="sv" id="sv-pathl">—</div><div class="sk">Path length</div></div>
+      <div class="stat-box"><div class="sv" id="sv-cost">—</div><div class="sk">Path cost</div></div>
+      <div class="stat-box"><div class="sv" id="sv-time">—</div><div class="sk">Calc. time</div></div>
+      <div class="stat-full"><div class="sk">Path</div><div class="sv" id="sv-path">—</div></div>
+    </div>
+  </div>
+
+  <!-- Save TXT -->
+  <div class="section" style="padding:10px">
+    <button class="btn btn-go" style="width:100%" onclick="saveTxt()">&#128190; Save Results (output.txt)</button>
+  </div>
+
+  <!-- Legend -->
+  <div class="section">
+    <div class="section-title">Legend</div>
+    <div class="legend">
+      <div class="lg"><div class="lbox" style="background:#00b894"></div>Start (S)</div>
+      <div class="lg"><div class="lbox" style="background:#e17055"></div>Goal (G)</div>
+      <div class="lg"><div class="lbox" style="background:#1a1a3e"></div>Wall (X)</div>
+      <div class="lg"><div class="lbox" style="background:#1e2050"></div>Open cell</div>
+      <div class="lg"><div class="lbox" style="background:#74b9ff"></div>Frontier</div>
+      <div class="lg"><div class="lbox" style="background:#636380"></div>Visited</div>
+      <div class="lg"><div class="lbox" style="background:#fdcb6e"></div>Path (BFS)</div>
+      <div class="lg"><div class="lbox" style="background:#a29bfe"></div>Path (Dijkstra)</div>
+      <div class="lg"><div class="lbox" style="background:#ff7675"></div>Flow edges</div>
+      <div class="lg"><div class="lbox" style="background:#00cec9"></div>MST edges</div>
+    </div>
+  </div>
+
+  <div style="font-size:.68rem;color:var(--txt2);text-align:center;padding:4px 0">
+    Maze Solver · All algorithms self-implemented
+  </div>
+</div>
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<div id="main">
+  <div id="progress-bar"><div id="progress-fill"></div></div>
+  <div id="toolbar">
+    <span class="t-label">Maze</span>
+    <span class="t-val" id="tb-size">—</span>
+    <span class="t-label">Algorithm</span>
+    <span class="t-val" id="tb-algo">BFS</span>
+    <span class="t-label">State</span>
+    <span class="t-val" id="tb-state" style="color:var(--gold)">Ready</span>
+    <button class="btn btn-secondary" id="btn-compare" onclick="toggleCompare()"
+      style="padding:4px 14px;font-size:.76rem;width:auto;margin:0">&#8942;&#8942; Compare</button>
+    <span id="compare-ctrl" class="compare-ctrl">
+      <span class="t-label">B algo:</span>
+      <select id="sel-algo2" class="compare-ctrl" style="display:inline-block"
+        onchange="selectAlgo2(this.value)">
+        <option value="bfs">BFS</option>
+        <option value="dijkstra" selected>Dijkstra</option>
+        <option value="flow">Max Flow</option>
+        <option value="mst">MST</option>
+      </select>
+      <select id="sel-algo2-dir" class="compare-ctrl" style="display:inline-block">
+        <option value="4">4-dir</option>
+        <option value="8">8-dir</option>
+      </select>
+      <button class="btn btn-go" onclick="runBoth()"
+        style="padding:4px 12px;font-size:.76rem;width:auto;margin:0">&#9654;&#9654; Run Both</button>
+    </span>
+    <button class="btn btn-secondary" id="btn-show-nums" onclick="toggleNumbers()"
+      style="padding:4px 12px;font-size:.76rem;width:auto;margin:0">Numbers</button>
+    <span class="t-label" style="margin-left:auto">Left-click/drag = toggle wall &nbsp;·&nbsp; Right-click drag = Pan &nbsp;·&nbsp; Scroll = Zoom</span>
+  </div>
+  <div id="canvas-area" style="gap:12px">
+    <!-- Panel A (main) -->
+    <div id="pane-a" class="canvas-pane">
+      <div id="pane-a-label" class="pane-label pane-label-a" style="display:none">Panel A · <span id="pa-algo-name">BFS</span></div>
+      <canvas id="mc"></canvas>
+      <div id="stats-a" class="panel-stats"></div>
+    </div>
+    <!-- Panel B (compare) -->
+    <div id="pane-b" class="canvas-pane" style="display:none">
+      <div class="pane-label pane-label-b">Panel B · <span id="pb-algo-name">Dijkstra</span></div>
+      <canvas id="mc2"></canvas>
+      <div id="stats-b" class="panel-stats" style="bottom:52px"></div>
+      <div id="pane-b-btns" style="display:flex;gap:6px;width:100%;justify-content:center">
+        <button class="btn btn-go" onclick="runAlgo2()">&#9654; Run B</button>
+        <button class="btn btn-secondary" onclick="resetViz2()">&#8634; Reset B</button>
+      </div>
+    </div>
+    <div id="overlay-stats" style="display:none">
+      <div>Visited: <span id="ov-visited">0</span></div>
+      <div>Queue/Heap: <span id="ov-queue">0</span></div>
+      <div>Current cost: <span id="ov-cost">0</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ SCRIPTS ══════════════════ -->
+<script src="js/state.js"></script>
+<script src="js/helpers.js"></script>
+<script src="js/canvas.js"></script>
+<script src="js/maze-gen.js"></script>
+<script src="js/cell-edit.js"></script>
+<script src="js/bfs.js"></script>
+<script src="js/dijkstra.js"></script>
+<script src="js/animation.js"></script>
+<script src="js/flow.js"></script>
+<script src="js/mst.js"></script>
+<script src="js/save.js"></script>
+<script src="js/compare.js"></script>
+<script src="js/init.js"></script>
+
+</body>
+</html>
