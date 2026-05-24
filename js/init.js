@@ -1,4 +1,18 @@
 // INIT — page load entry point
+const DEFAULT_MAZE =
+`S1234X6789
+1X2X4X6X89
+11111X1111
+X3XXX4XXX1
+1234543211
+1XXX5XXX21
+1111511111
+9X9X5X9X91
+1234512341
+9876X4321G`;
+
 window.addEventListener('load',()=>{
-  generateMaze();
+  const ta = document.getElementById('txt-custom');
+  ta.value = DEFAULT_MAZE;
+  loadCustom();
 });
