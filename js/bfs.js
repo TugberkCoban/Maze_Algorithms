@@ -1,6 +1,4 @@
-// ════════════════════════════════════════════════════════════════
-//  BFS — Breadth-First Search algorithm
-// ════════════════════════════════════════════════════════════════
+// BFS — Breadth-First Search algorithm
 function initBFS(modeOverride){
   const mode = modeOverride !== undefined ? modeOverride : getMode('bfs');
   const [sr,sc]=startPos, goal=k(...goalPos);

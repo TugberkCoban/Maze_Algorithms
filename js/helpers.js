@@ -1,6 +1,4 @@
-// ════════════════════════════════════════════════════════════════
-//  HELPERS — utility functions used across modules
-// ════════════════════════════════════════════════════════════════
+// HELPERS — utility functions used across modules
 function cellVal(r,c){
   const ch=G.cells[r][c];
   return (ch==='S'||ch==='G')?0:parseInt(ch);

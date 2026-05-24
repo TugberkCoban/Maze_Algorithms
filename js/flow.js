@@ -1,6 +1,4 @@
-// ════════════════════════════════════════════════════════════════
-//  MAX FLOW — Edmonds-Karp (BFS-based); runs immediately, no animation
-// ════════════════════════════════════════════════════════════════
+// MAX FLOW — Edmonds-Karp (BFS-based); runs immediately, no animation
 function runFlowImmediate(){
   if(!startPos||!goalPos){alert('Need S and G');return;}
   setTbState('Computing…','var(--accent)');

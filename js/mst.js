@@ -1,6 +1,4 @@
-// ════════════════════════════════════════════════════════════════
-//  MST — Minimum Spanning Tree (Kruskal + Union-Find); runs immediately
-// ════════════════════════════════════════════════════════════════
+// MST — Minimum Spanning Tree (Kruskal + Union-Find); runs immediately
 function runMSTImmediate(){
   if(!startPos){alert('Need S');return;}
   setTbState('Computing…','var(--accent)');

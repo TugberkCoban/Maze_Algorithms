@@ -1,6 +1,4 @@
-// ════════════════════════════════════════════════════════════════
-//  MAZE GENERATION
-// ════════════════════════════════════════════════════════════════
+// MAZE GENERATION
 function rnd(n){return Math.floor(Math.random()*n)}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a}
 
@@ -49,7 +47,7 @@ function generateMaze(){
   resetViz();
 }
 
-// ── DFS ──────────────────────────────────────────────────────
+// DFS
 function genDFS(rows,cols){
   // All walls; carve passages via DFS on a grid where cells are
   // at even indices (2-step movement creates walls between them).
@@ -70,7 +68,7 @@ function genDFS(rows,cols){
   carve(sr,sc);
 }
 
-// ── Prim ──────────────────────────────────────────────────────
+// Prim
 function genPrim(rows,cols){
   const inMaze=Array.from({length:rows},()=>Array(cols).fill(false));
   function neighbors2(r,c){
@@ -99,7 +97,7 @@ function genPrim(rows,cols){
   }
 }
 
-// ── Kruskal ──────────────────────────────────────────────────
+// Kruskal
 function genKruskal(rows,cols){
   // id each cell; union-find; remove random walls
   const id=(r,c)=>r*cols+c;
@@ -144,7 +142,7 @@ document.getElementById('sel-gen').addEventListener('change',function(){
     this.value==='custom'?'block':'none';
 });
 
-// ── Guaranteed Path (random walk biased toward goal) ──────────
+// Guaranteed Path (random walk biased toward goal)
 function genGuaranteedPath(rows,cols){
   // Random open cells + some walls
   for(let r=0;r<rows;r++) for(let c=0;c<cols;c++)

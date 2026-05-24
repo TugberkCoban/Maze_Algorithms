@@ -1,6 +1,4 @@
-// ════════════════════════════════════════════════════════════════
-//  SAVE RESULTS — runs algorithms synchronously & downloads output.txt
-// ════════════════════════════════════════════════════════════════
+// SAVE RESULTS — runs algorithms synchronously & downloads output.txt
 function bfsDirect(){
   if(!startPos||!goalPos) return null;
   const [sr,sc]=startPos,[gr,gc]=goalPos;

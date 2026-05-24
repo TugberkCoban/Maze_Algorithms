@@ -1,6 +1,4 @@
-// ════════════════════════════════════════════════════════════════
-//  INIT — generate a default maze on load
-// ════════════════════════════════════════════════════════════════
+// INIT — page load entry point
 window.addEventListener('load',()=>{
   generateMaze();
 });

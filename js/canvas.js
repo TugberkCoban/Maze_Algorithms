@@ -1,6 +1,4 @@
-// ════════════════════════════════════════════════════════════════
-//  CANVAS — drawing functions
-// ════════════════════════════════════════════════════════════════
+// CANVAS — drawing functions
 const mc  = document.getElementById('mc');
 const ctx = mc.getContext('2d');
 
@@ -31,8 +29,7 @@ function drawOn(canv, _ct, ovViz){
   if (!G.rows) return;
   const isMain = (canv === mc);
   const _area  = document.getElementById('canvas-area');
-
-  // ── Size canvas to its pane ──────────────────────────────────
+  // Size canvas to its pane
   const pane  = canv.parentElement;
   const paneW = pane && pane.clientWidth > 0 ? pane.clientWidth
                                               : Math.max(200, _area.clientWidth - 40);
@@ -45,7 +42,7 @@ function drawOn(canv, _ct, ovViz){
   canv.width  = Math.max(200, paneW);
   canv.height = paneH;
 
-  // ── Compute cell size + transform ────────────────────────────
+  // Compute cell size + transform
   let CS, tx, ty, sc;
   if (isMain){
     // Panel A: respect user pan/zoom
@@ -72,7 +69,7 @@ function drawOn(canv, _ct, ovViz){
   _ct.translate(tx, ty);
   _ct.scale(sc, sc);
 
-  // ── base layer (cells) ──
+  // base layer (cells)
   for (let r=0;r<G.rows;r++){
     for (let c=0;c<G.cols;c++){
       const ch = G.cells[r][c];

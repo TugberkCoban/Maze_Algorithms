@@ -1,6 +1,4 @@
-// ════════════════════════════════════════════════════════════════
-//  DIJKSTRA — Dijkstra's shortest path with a binary min-heap
-// ════════════════════════════════════════════════════════════════
+// DIJKSTRA — Dijkstra's shortest path with a binary min-heap
 
 // Min-heap (binary heap)
 class MinHeap{

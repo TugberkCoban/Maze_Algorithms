@@ -1,6 +1,4 @@
-// ════════════════════════════════════════════════════════════════
-//  CELL EDITING — left-click/drag toggles walls; right-drag pans
-// ════════════════════════════════════════════════════════════════
+// CELL EDITING — left-click/drag toggles walls; right-drag pans
 mc.addEventListener('mousedown', e=>{
   if(e.button===0){ isDragging=true; handleCellClick(e); }
   else if(e.button===2){ isPanning=true; panX0=e.clientX; panY0=e.clientY; vx0=vx; vy0=vy; }

@@ -1,6 +1,4 @@
-// ════════════════════════════════════════════════════════════════
-//  COMPARE MODE — side-by-side algorithm comparison
-// ════════════════════════════════════════════════════════════════
+// COMPARE MODE — side-by-side algorithm comparison
 
 // Show algorithm result stats below a panel (only in compare mode)
 // info = array of [label, value] pairs, or null to hide

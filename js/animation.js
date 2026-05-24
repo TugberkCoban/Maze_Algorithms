@@ -1,6 +1,4 @@
-// ════════════════════════════════════════════════════════════════
-//  ANIMATION ENGINE — run/step/reset controls & algorithm selector
-// ════════════════════════════════════════════════════════════════
+// ANIMATION ENGINE — run/step/reset controls & algorithm selector
 
 function selectAlgo(btn){
   document.querySelectorAll('.algo-tab').forEach(b=>b.classList.remove('active'));
@@ -112,7 +110,7 @@ function stepAnim(){
   return done;
 }
 
-// ── Resize listener ─────────────────────────────────────────
+// Resize listener
 window.addEventListener('resize',()=>{
   if(!G.rows) return;
   const ovA = animState?{visitedSet:animState.visitedSet,frontierSet:animState.frontierSet,
